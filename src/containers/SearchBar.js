@@ -1,6 +1,9 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { fetchWeather } from "../actions/index";
 
-export default class SearchBar extends Component {
+class SearchBar extends Component {
   constructor(props) {
     super(props) 
     this.state = {
@@ -8,6 +11,7 @@ export default class SearchBar extends Component {
     };
 
     this.onInputChange = this.onInputChange.bind(this);
+    this.onFormSubmit = this.onFormSubmit.bind(this);
   };
 
   onInputChange(event) {
@@ -19,6 +23,10 @@ export default class SearchBar extends Component {
 
   onFormSubmit(event) {
     event.preventDefault();
+
+    // Fetching data
+    this.props.fetchWeather(this.state.term);
+    this.setState({ term: "" });
   }
 
   render() {
@@ -37,3 +45,11 @@ export default class SearchBar extends Component {
     )
   }
 }
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators( { fetchWeather }, dispatch); // This causes the action creator whenever it gets called to bind the action creators with dispatch and make sure that the action flows down to the middleware and then to the reducers
+};
+
+export default connect(null, mapDispatchToProps)(SearchBar); // Whenever we are passing the function, it always goes in to the second argument
+// Null is actually to say that we don't need any state as Redux is taking care of it
+// Thanks to this we have access to props
